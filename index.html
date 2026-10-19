@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance Management System</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<header class="topbar">
+    <div>
+        <p class="eyebrow">COLLEGE DBMS PROJECT</p>
+        <h1>Attendance Management</h1>
+        <p class="subtitle">A simple way to manage students, subjects and attendance.</p>
+    </div>
+</header>
+
+<nav class="nav">
+    <button class="nav-btn active" data-section="dashboard">Dashboard</button>
+    <button class="nav-btn" data-section="students">Students</button>
+    <button class="nav-btn" data-section="subjects">Subjects</button>
+    <button class="nav-btn" data-section="attendance">Attendance</button>
+    <button class="nav-btn" data-section="search">Search & Percentage</button>
+</nav>
+
+<main>
+    <p id="message" class="message" role="status" aria-live="polite"></p>
+
+    <section id="dashboard" class="section active">
+        <div class="section-heading">
+            <div><p class="eyebrow">OVERVIEW</p><h2>Dashboard</h2></div>
+            <button class="secondary" id="refreshDashboard">Refresh data</button>
+        </div>
+        <div class="stats">
+            <article class="stat-card"><span>Total students</span><strong id="studentCount">—</strong></article>
+            <article class="stat-card"><span>Total subjects</span><strong id="subjectCount">—</strong></article>
+            <article class="stat-card"><span>Attendance records</span><strong id="attendanceCount">—</strong></article>
+        </div>
+        <div class="info-panel">
+            <h3>Getting started</h3>
+            <p>First add students, then add subjects, and finally mark attendance for each student and subject.</p>
+        </div>
+    </section>
+
+    <section id="students" class="section">
+        <div class="section-heading"><div><p class="eyebrow">STUDENT DETAILS</p><h2>Add or update student</h2></div></div>
+        <form id="studentForm" class="form-grid">
+            <input type="hidden" id="studentId">
+            <label>Roll number *<input id="rollNo" maxlength="20" required></label>
+            <label>Full name *<input id="studentName" maxlength="100" required></label>
+            <label>Branch *<input id="branch" maxlength="50" placeholder="e.g. CT" required></label>
+            <label>Semester *<input id="semester" type="number" min="1" max="12" required></label>
+            <label class="wide">Email (optional)<input id="email" type="email" maxlength="100"></label>
+            <div class="form-actions wide">
+                <button type="submit" id="saveStudentBtn">Add student</button>
+                <button type="button" class="secondary" id="clearStudentBtn">Clear form</button>
+            </div>
+        </form>
+        <div class="table-heading"><h3>Student list</h3><button class="secondary" id="refreshStudents">Refresh</button></div>
+        <div class="table-wrap"><table><thead><tr><th>ID</th><th>Roll no.</th><th>Name</th><th>Branch</th><th>Semester</th><th>Email</th><th>Action</th></tr></thead><tbody id="studentTable"></tbody></table></div>
+    </section>
+
+    <section id="subjects" class="section">
+        <div class="section-heading"><div><p class="eyebrow">SUBJECT DETAILS</p><h2>Add subject</h2></div></div>
+        <form id="subjectForm" class="form-grid two-col">
+            <label>Subject name *<input id="subjectName" maxlength="100" required></label>
+            <label>Subject code *<input id="subjectCode" maxlength="20" required></label>
+            <div class="form-actions wide"><button type="submit">Add subject</button></div>
+        </form>
+        <div class="table-heading"><h3>Subject list</h3><button class="secondary" id="refreshSubjects">Refresh</button></div>
+        <div class="table-wrap"><table><thead><tr><th>ID</th><th>Subject name</th><th>Subject code</th></tr></thead><tbody id="subjectTable"></tbody></table></div>
+    </section>
+
+    <section id="attendance" class="section">
+        <div class="section-heading"><div><p class="eyebrow">DAILY REGISTER</p><h2>Mark attendance</h2></div></div>
+        <form id="attendanceForm" class="form-grid">
+            <label>Student *<select id="attendanceStudent" required><option value="">Choose student</option></select></label>
+            <label>Subject *<select id="attendanceSubject" required><option value="">Choose subject</option></select></label>
+            <label>Date *<input id="attendanceDate" type="date" required></label>
+            <label>Status *<select id="attendanceStatus" required><option>Present</option><option>Absent</option></select></label>
+            <div class="form-actions wide"><button type="submit">Save attendance</button></div>
+        </form>
+        <div class="table-heading"><h3>Attendance records</h3><button class="secondary" id="refreshAttendance">Refresh</button></div>
+        <div class="table-wrap"><table><thead><tr><th>ID</th><th>Roll no.</th><th>Name</th><th>Subject</th><th>Date</th><th>Status</th><th>Action</th></tr></thead><tbody id="attendanceTable"></tbody></table></div>
+    </section>
+
+    <section id="search" class="section">
+        <div class="section-heading"><div><p class="eyebrow">REPORT</p><h2>Search attendance</h2></div></div>
+        <form id="searchForm" class="search-form">
+            <label for="searchRoll">Student roll number</label>
+            <input id="searchRoll" required placeholder="Enter roll number">
+            <button type="submit">Search</button>
+        </form>
+        <div class="table-wrap"><table><thead><tr><th>Roll no.</th><th>Name</th><th>Subject</th><th>Total classes</th><th>Present</th><th>Attendance %</th></tr></thead><tbody id="searchTable"></tbody></table></div>
+        <p class="hint">Percentage = (Present classes ÷ Total classes) × 100</p>
+    </section>
+</main>
+<footer>Attendance Management System · HTML, CSS, JavaScript, Flask & MySQL</footer>
+<script src="/script.js"></script>
+</body>
+</html>
