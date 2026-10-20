@@ -1,101 +1,89 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Attendance Management System</title>
-    <link rel="stylesheet" href="/style.css">
-</head>
-<body>
-<header class="topbar">
-    <div>
-        <p class="eyebrow">COLLEGE DBMS PROJECT</p>
-        <h1>Attendance Management</h1>
-        <p class="subtitle">A simple way to manage students, subjects and attendance.</p>
-    </div>
-</header>
-
-<nav class="nav">
-    <button class="nav-btn active" data-section="dashboard">Dashboard</button>
-    <button class="nav-btn" data-section="students">Students</button>
-    <button class="nav-btn" data-section="subjects">Subjects</button>
-    <button class="nav-btn" data-section="attendance">Attendance</button>
-    <button class="nav-btn" data-section="search">Search & Percentage</button>
-</nav>
-
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Attendance Management System</title>
+<style>
+:root{--bg:#000;--panel:#07101f;--line:#16264a;--fg:#e8eefc;--mut:#9fb0d0;--acc:#4da3ff;--ok:#3ecf8e;--bad:#ff6b6b}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 system-ui,Segoe UI,Arial,sans-serif}
+header{background:linear-gradient(90deg,#001236,#003a8c);padding:28px 8vw}header h1{margin:0;font-size:2rem}header p{margin:4px 0 0}
+nav{display:flex;gap:28px;flex-wrap:wrap;padding:18px 8vw;border-bottom:1px solid var(--line)}
+nav button{background:none;border:0;color:var(--fg);font:600 1rem inherit;cursor:pointer;padding:4px 0;border-bottom:2px solid transparent}
+nav button.on{border-color:var(--acc);color:var(--acc)}
+main{padding:24px 8vw;max-width:1200px}section{display:none}section.on{display:block}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:20px;margin:16px 0}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px}.stats b{display:block;font-size:2rem;margin-top:8px}
+form{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}label{display:flex;flex-direction:column;gap:4px;color:var(--mut);font-size:.9rem}
+input,select{background:#000;color:var(--fg);border:1px solid var(--line);border-radius:8px;padding:10px;font:inherit}
+button.p,button.s{border-radius:8px;border:0;padding:10px 16px;font:600 .95rem inherit;cursor:pointer}
+button.p{background:var(--acc);color:#001}button.s{background:#10203f;color:var(--fg)}button.x{background:none;border:0;color:var(--bad);cursor:pointer}button.e{background:none;border:0;color:var(--acc);cursor:pointer}
+.row{display:flex;gap:10px;align-items:end}.head{display:flex;justify-content:space-between;align-items:center}
+.wrap{overflow-x:auto}table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);white-space:nowrap}th{color:var(--mut);font-weight:600}
+.Present{color:var(--ok)}.Absent{color:var(--bad)}.empty{color:var(--mut);text-align:center}
+#toast{position:fixed;bottom:20px;right:20px;padding:12px 18px;border-radius:10px;background:#10203f;display:none;max-width:80vw}#toast.err{background:#5a1a1a}
+</style></head><body>
+<header><h1>Attendance Management</h1><p>A simple way to manage students, subjects and attendance.</p></header>
+<nav id="nav">
+<button data-t="dash" class="on">Dashboard</button><button data-t="stu">Students</button><button data-t="sub">Subjects</button>
+<button data-t="att">Attendance</button><button data-t="rep">Search &amp; Percentage</button></nav>
 <main>
-    <p id="message" class="message" role="status" aria-live="polite"></p>
+<section id="dash" class="on"><div class="head"><h2>Dashboard</h2><button class="s" onclick="loadAll()">Refresh data</button></div>
+<div class="stats"><div class="card">Total students<b id="c-stu">—</b></div><div class="card">Total subjects<b id="c-sub">—</b></div><div class="card">Attendance records<b id="c-att">—</b></div></div>
+<div class="card"><h3>Getting started</h3><p>First add students, then add subjects, and finally mark attendance for each student and subject.</p></div></section>
 
-    <section id="dashboard" class="section active">
-        <div class="section-heading">
-            <div><p class="eyebrow">OVERVIEW</p><h2>Dashboard</h2></div>
-            <button class="secondary" id="refreshDashboard">Refresh data</button>
-        </div>
-        <div class="stats">
-            <article class="stat-card"><span>Total students</span><strong id="studentCount">—</strong></article>
-            <article class="stat-card"><span>Total subjects</span><strong id="subjectCount">—</strong></article>
-            <article class="stat-card"><span>Attendance records</span><strong id="attendanceCount">—</strong></article>
-        </div>
-        <div class="info-panel">
-            <h3>Getting started</h3>
-            <p>First add students, then add subjects, and finally mark attendance for each student and subject.</p>
-        </div>
-    </section>
+<section id="stu"><h2>Add or update student</h2><div class="card"><form id="fs">
+<label>Roll number *<input name="roll_no" required></label><label>Full name *<input name="name" required></label>
+<label>Branch *<input name="branch" required></label><label>Semester *<input name="semester" type="number" min="1" max="12" required></label>
+<label>Email (optional)<input name="email" type="email"></label>
+<div class="row"><button class="p">Add student</button><button type="button" class="s" onclick="fs.reset()">Clear form</button></div></form></div>
+<div class="card wrap"><h3>Student list</h3><table><thead><tr><th>ID</th><th>Roll no.</th><th>Name</th><th>Branch</th><th>Semester</th><th>Email</th><th>Action</th></tr></thead><tbody id="t-stu"></tbody></table></div></section>
 
-    <section id="students" class="section">
-        <div class="section-heading"><div><p class="eyebrow">STUDENT DETAILS</p><h2>Add or update student</h2></div></div>
-        <form id="studentForm" class="form-grid">
-            <input type="hidden" id="studentId">
-            <label>Roll number *<input id="rollNo" maxlength="20" required></label>
-            <label>Full name *<input id="studentName" maxlength="100" required></label>
-            <label>Branch *<input id="branch" maxlength="50" placeholder="e.g. CT" required></label>
-            <label>Semester *<input id="semester" type="number" min="1" max="12" required></label>
-            <label class="wide">Email (optional)<input id="email" type="email" maxlength="100"></label>
-            <div class="form-actions wide">
-                <button type="submit" id="saveStudentBtn">Add student</button>
-                <button type="button" class="secondary" id="clearStudentBtn">Clear form</button>
-            </div>
-        </form>
-        <div class="table-heading"><h3>Student list</h3><button class="secondary" id="refreshStudents">Refresh</button></div>
-        <div class="table-wrap"><table><thead><tr><th>ID</th><th>Roll no.</th><th>Name</th><th>Branch</th><th>Semester</th><th>Email</th><th>Action</th></tr></thead><tbody id="studentTable"></tbody></table></div>
-    </section>
+<section id="sub"><h2>Add subject</h2><div class="card"><form id="fsub">
+<label>Subject name *<input name="name" required></label><label>Subject code *<input name="code" required></label>
+<div class="row"><button class="p">Add subject</button></div></form></div>
+<div class="card wrap"><h3>Subject list</h3><table><thead><tr><th>ID</th><th>Subject name</th><th>Subject code</th><th>Action</th></tr></thead><tbody id="t-sub"></tbody></table></div></section>
 
-    <section id="subjects" class="section">
-        <div class="section-heading"><div><p class="eyebrow">SUBJECT DETAILS</p><h2>Add subject</h2></div></div>
-        <form id="subjectForm" class="form-grid two-col">
-            <label>Subject name *<input id="subjectName" maxlength="100" required></label>
-            <label>Subject code *<input id="subjectCode" maxlength="20" required></label>
-            <div class="form-actions wide"><button type="submit">Add subject</button></div>
-        </form>
-        <div class="table-heading"><h3>Subject list</h3><button class="secondary" id="refreshSubjects">Refresh</button></div>
-        <div class="table-wrap"><table><thead><tr><th>ID</th><th>Subject name</th><th>Subject code</th></tr></thead><tbody id="subjectTable"></tbody></table></div>
-    </section>
+<section id="att"><h2>Mark attendance</h2><div class="card"><form id="fa">
+<label>Student *<select name="student_id" id="s-stu" required></select></label><label>Subject *<select name="subject_id" id="s-sub" required></select></label>
+<label>Date *<input name="date" type="date" required></label>
+<label>Status *<select name="status"><option>Present</option><option>Absent</option></select></label>
+<div class="row"><button class="p">Save attendance</button></div></form></div>
+<div class="card wrap"><h3>Attendance records</h3><table><thead><tr><th>ID</th><th>Roll no.</th><th>Name</th><th>Subject</th><th>Date</th><th>Status</th><th>Action</th></tr></thead><tbody id="t-att"></tbody></table></div></section>
 
-    <section id="attendance" class="section">
-        <div class="section-heading"><div><p class="eyebrow">DAILY REGISTER</p><h2>Mark attendance</h2></div></div>
-        <form id="attendanceForm" class="form-grid">
-            <label>Student *<select id="attendanceStudent" required><option value="">Choose student</option></select></label>
-            <label>Subject *<select id="attendanceSubject" required><option value="">Choose subject</option></select></label>
-            <label>Date *<input id="attendanceDate" type="date" required></label>
-            <label>Status *<select id="attendanceStatus" required><option>Present</option><option>Absent</option></select></label>
-            <div class="form-actions wide"><button type="submit">Save attendance</button></div>
-        </form>
-        <div class="table-heading"><h3>Attendance records</h3><button class="secondary" id="refreshAttendance">Refresh</button></div>
-        <div class="table-wrap"><table><thead><tr><th>ID</th><th>Roll no.</th><th>Name</th><th>Subject</th><th>Date</th><th>Status</th><th>Action</th></tr></thead><tbody id="attendanceTable"></tbody></table></div>
-    </section>
-
-    <section id="search" class="section">
-        <div class="section-heading"><div><p class="eyebrow">REPORT</p><h2>Search attendance</h2></div></div>
-        <form id="searchForm" class="search-form">
-            <label for="searchRoll">Student roll number</label>
-            <input id="searchRoll" required placeholder="Enter roll number">
-            <button type="submit">Search</button>
-        </form>
-        <div class="table-wrap"><table><thead><tr><th>Roll no.</th><th>Name</th><th>Subject</th><th>Total classes</th><th>Present</th><th>Attendance %</th></tr></thead><tbody id="searchTable"></tbody></table></div>
-        <p class="hint">Percentage = (Present classes ÷ Total classes) × 100</p>
-    </section>
-</main>
-<footer>Attendance Management System · HTML, CSS, JavaScript, Flask & MySQL</footer>
-<script src="/script.js"></script>
-</body>
-</html>
+<section id="rep"><h2>Search attendance</h2><div class="card"><form id="fr"><label>Student roll number<input name="roll_no" placeholder="Leave blank to show everyone"></label>
+<div class="row"><button class="p">Search</button></div></form></div>
+<div class="card wrap"><table><thead><tr><th>Roll no.</th><th>Name</th><th>Subject</th><th>Total classes</th><th>Present</th><th>Attendance %</th></tr></thead><tbody id="t-rep"></tbody></table>
+<p style="color:var(--mut)">Percentage = (Present classes ÷ Total classes) × 100</p></div></section>
+</main><div id="toast"></div>
+<script>
+const $=s=>document.querySelector(s), esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function toast(m,err){const t=$("#toast");t.textContent=m;t.className=err?"err":"";t.style.display="block";clearTimeout(t._h);t._h=setTimeout(()=>t.style.display="none",3500)}
+async function api(path,method="GET",body){
+  const r=await fetch("/api/"+path,{method,headers:{"Content-Type":"application/json"},body:body?JSON.stringify(body):undefined});
+  let d;try{d=await r.json()}catch{throw new Error("Server error ("+r.status+"). Check the database settings.")}
+  if(!r.ok)throw new Error(d.error||"Request failed");return d}
+const fd=f=>Object.fromEntries(new FormData(f));
+const rows=(el,list,fn,cols)=>$(el).innerHTML=list.length?list.map(fn).join(""):`<tr><td colspan="${cols}" class="empty">No records yet</td></tr>`;
+document.querySelectorAll("#nav button").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll("nav button,section").forEach(e=>e.classList.remove("on"));b.classList.add("on");$("#"+b.dataset.t).classList.add("on")});
+async function loadAll(){
+  try{
+    const [st,stu,sub,att]=await Promise.all([api("stats"),api("students"),api("subjects"),api("attendance")]);
+    $("#c-stu").textContent=st.students;$("#c-sub").textContent=st.subjects;$("#c-att").textContent=st.attendance;
+    window._stu=stu;
+    rows("#t-stu",stu,s=>`<tr><td>${s.id}</td><td>${esc(s.roll_no)}</td><td>${esc(s.name)}</td><td>${esc(s.branch)}</td><td>${s.semester}</td><td>${esc(s.email)}</td><td><button class="e" onclick="edit(${s.id})">Edit</button><button class="x" onclick="del('students',${s.id})">Delete</button></td></tr>`,7);
+    rows("#t-sub",sub,s=>`<tr><td>${s.id}</td><td>${esc(s.name)}</td><td>${esc(s.code)}</td><td><button class="x" onclick="del('subjects',${s.id})">Delete</button></td></tr>`,4);
+    rows("#t-att",att,a=>`<tr><td>${a.id}</td><td>${esc(a.roll_no)}</td><td>${esc(a.name)}</td><td>${esc(a.subject)}</td><td>${a.date}</td><td class="${a.status}">${a.status}</td><td><button class="x" onclick="del('attendance',${a.id})">Delete</button></td></tr>`,7);
+    $("#s-stu").innerHTML='<option value="">Choose student</option>'+stu.map(s=>`<option value="${s.id}">${esc(s.roll_no)} – ${esc(s.name)}</option>`).join("");
+    $("#s-sub").innerHTML='<option value="">Choose subject</option>'+sub.map(s=>`<option value="${s.id}">${esc(s.name)} (${esc(s.code)})</option>`).join("");
+  }catch(e){toast(e.message,1)}}
+function edit(id){const s=_stu.find(x=>x.id==id),f=$("#fs");for(const k of["roll_no","name","branch","semester","email"])f[k].value=s[k]??"";
+  document.querySelector('[data-t="stu"]').click();f.scrollIntoView();toast("Editing "+s.roll_no+" – change fields and click Add student to save")}
+async function del(what,id){if(!confirm("Delete this record?"))return;try{await api(what+"/"+id,"DELETE");toast("Deleted");loadAll()}catch(e){toast(e.message,1)}}
+function submit(form,path,msg,after){form.onsubmit=async e=>{e.preventDefault();try{await api(path,"POST",fd(form));toast(msg);after?.();loadAll()}catch(x){toast(x.message,1)}}}
+submit($("#fs"),"students","Student saved",()=>$("#fs").reset());
+submit($("#fsub"),"subjects","Subject saved",()=>$("#fsub").reset());
+submit($("#fa"),"attendance","Attendance saved");
+$("#fr").onsubmit=async e=>{e.preventDefault();try{const r=await api("report?roll_no="+encodeURIComponent(fd(e.target).roll_no||""));
+  rows("#t-rep",r,x=>`<tr><td>${esc(x.roll_no)}</td><td>${esc(x.name)}</td><td>${esc(x.subject)}</td><td>${x.total}</td><td>${x.present}</td><td class="${x.percentage>=75?"Present":"Absent"}">${x.percentage}%</td></tr>`,6)}catch(x){toast(x.message,1)}};
+$("#fa").date.valueAsDate=new Date();loadAll();
+</script></body></html>
